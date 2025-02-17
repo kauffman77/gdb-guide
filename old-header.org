@@ -1,0 +1,163 @@
+# Implements a fixed side panel for table of contents for web export
+
+# Gold: R:255 G:204 B:51 (#ffcc33)
+# Maroon: R:122 G:0 B:25 (#7a0019)
+#         --heading-bg-color:#c8a838;
+
+#+OPTIONS:   H:3 num:1 toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc timestamp:t
+#+HTML_MATHJAX: path:"https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js"
+# #+HTML_MATHJAX: path:"http://cs.gmu.edu/~kauffman/MathJax/MathJax.js"
+#+BIND: org-html-preamble "<i>Last Updated: %T</i>"
+#+BIND: org-html-postamble "<hr/> <i> Author: %a (%e) <br/> Date: %T <br/> </i>"
+#+HTML_HEAD: <meta name="viewport" content="width=device-width, maximum-scale=1, minimum-scale=1" />
+#+HTML_HEAD: <style type="text/css"> 
+#+HTML_HEAD: @media screen {
+#+HTML_HEAD:     :root {
+#+HTML_HEAD:         --heading-bg-color:#e8c62e;
+#+HTML_HEAD:         --heading-fg-color:#7a0019;
+#+HTML_HEAD:     }
+#+HTML_HEAD:     html { 
+#+HTML_HEAD:         font-family: serif; 
+#+HTML_HEAD:         text-align: justify; 
+#+HTML_HEAD:     } 
+# #+HTML_HEAD:     .src, .example { 
+# #+HTML_HEAD:         background-color: var(--heading-fg-color);
+# #+HTML_HEAD:     } 
+#+HTML_HEAD:     pre.src, pre.example { 
+#+HTML_HEAD:       overflow-x: scroll; 
+#+HTML_HEAD:     } 
+#+HTML_HEAD:     /* Merge subtitle area with title area */ 
+#+HTML_HEAD:     .subtitle { 
+#+HTML_HEAD:         text-align: center;
+#+HTML_HEAD:         margin-top: -2em;
+#+HTML_HEAD:         padding-top: 1em;
+#+HTML_HEAD:         padding-bottom: 0.1em;
+#+HTML_HEAD:     }
+#+HTML_HEAD:     .title, .subtitle { 
+#+HTML_HEAD:        color: var(--heading-fg-color);
+#+HTML_HEAD:        background-color: var(--heading-bg-color);
+#+HTML_HEAD:     }
+#+HTML_HEAD:     /* Section borders, left section header style */ 
+#+HTML_HEAD:     div.outline-2, #table-of-contents { 
+#+HTML_HEAD:         background-color: rgb(250,250,250);
+#+HTML_HEAD:         border: 0.75em solid var(--heading-bg-color); 
+#+HTML_HEAD:         border-top: 0em;
+#+HTML_HEAD:         padding: 0em .5em .5em .5em; /* top right bottom left */
+#+HTML_HEAD:         margin: 1em 0em 1em 0em; /* top right bottom left */
+#+HTML_HEAD:     } 
+#+HTML_HEAD:     div.outline-2 > h2, #table-of-contents > h2 { 
+#+HTML_HEAD:         background-color: var(--heading-bg-color);
+#+HTML_HEAD:         color: var(--heading-fg-color);
+#+HTML_HEAD:         font-variant: small-caps; 
+#+HTML_HEAD:         padding: 0em 0em 0em .5em; /* top right bottom left */
+#+HTML_HEAD:         margin: 0em -.5em 0em -.75em; /* top right bottom left */
+#+HTML_HEAD:         text-align: left;
+#+HTML_HEAD:     }
+#+HTML_HEAD:     blockquote {
+#+HTML_HEAD:         font-style: italic;
+#+HTML_HEAD:     }
+#+HTML_HEAD:     td, th {
+#+HTML_HEAD:         padding-top: 2px;
+#+HTML_HEAD:         padding-bottom: 2px;
+#+HTML_HEAD:     }
+#+HTML_HEAD:     body {
+#+HTML_HEAD:         background-color: #EEE;
+#+HTML_HEAD:     }
+#+HTML_HEAD:     pre {
+#+HTML_HEAD:     }
+#+HTML_HEAD:     #content, #preamble, #postamble {
+#+HTML_HEAD:         margin-left:300px;
+#+HTML_HEAD:         max-width: 100%;
+#+HTML_HEAD:     }
+#+HTML_HEAD:     .tag {
+#+HTML_HEAD:       background-color: inherit; font-family: inherit;
+#+HTML_HEAD:       padding: inherit; font-size: 80%; font-weight: inherit;
+#+HTML_HEAD:       text-transform: uppercase;
+#+HTML_HEAD:     }
+#+HTML_HEAD:     
+#+HTML_HEAD:     .figure p { text-align: inherit; }
+#+HTML_HEAD:     figure-number { font-style: italic; }
+#+HTML_HEAD:     #table-of-contents {
+#+HTML_HEAD:       text-align: left; 
+#+HTML_HEAD:       position: fixed;
+#+HTML_HEAD:       left: 0;
+#+HTML_HEAD:       margin: 0 auto;
+#+HTML_HEAD:       padding: 0;
+#+HTML_HEAD:       width: 300px;
+#+HTML_HEAD:       top: 0;
+#+HTML_HEAD:       height: 100%;
+#+HTML_HEAD:       border: 0;
+#+HTML_HEAD:       display: block;
+#+HTML_HEAD:     }
+#+HTML_HEAD:     #text-table-of-contents {
+#+HTML_HEAD:       overflow-y: scroll; 
+#+HTML_HEAD:       height: 100%;
+#+HTML_HEAD:     }
+#+HTML_HEAD:     #text-table-of-contents ul {
+#+HTML_HEAD:         padding-left: 1em; 
+#+HTML_HEAD:         margin-left: 0.5em; 
+#+HTML_HEAD:     }
+#+HTML_HEAD:     #table-of-contents > h2 { 
+#+HTML_HEAD:         padding: 0.1em; 
+#+HTML_HEAD:         margin: 0; 
+#+HTML_HEAD:     }
+#+HTML_HEAD:     /* adjustments for small screen, toc at top only */
+#+HTML_HEAD:     @media (max-width: 800px) { /* landscape for iphone */
+#+HTML_HEAD:       html {
+#+HTML_HEAD:          -webkit-text-size-adjust: none;  /* prevent scaling of text on mobile */
+#+HTML_HEAD:       }
+#+HTML_HEAD:       body {
+#+HTML_HEAD:         background-color: #EEE;
+#+HTML_HEAD:         width:100%;
+#+HTML_HEAD:         margin:0 auto;
+#+HTML_HEAD:       }
+#+HTML_HEAD:       #content, #preamble, #postamble {
+#+HTML_HEAD:           margin-left:0;
+#+HTML_HEAD:       }
+#+HTML_HEAD:       #table-of-contents {
+#+HTML_HEAD:         position: static;
+#+HTML_HEAD:         left: inherit;
+#+HTML_HEAD:         width:inherit;
+#+HTML_HEAD:         height: auto;
+#+HTML_HEAD:         border-top: 0em;
+#+HTML_HEAD:         padding: 0em .5em .5em .5em; /* top right bottom left */
+#+HTML_HEAD:         margin: 1em 0em 1em 0em; /* top right bottom left */
+#+HTML_HEAD:         border: 0.75em solid #006633; 
+#+HTML_HEAD:       }
+#+HTML_HEAD:     div.outline-2, #table-of-contents { 
+#+HTML_HEAD:         background-color: rgb(250,250,250);
+#+HTML_HEAD:         border: 0.75em solid var(--heading-bg-color); 
+#+HTML_HEAD:         border-top: 0em;
+#+HTML_HEAD:         padding: 0em .5em .5em .5em; /* top right bottom left */
+#+HTML_HEAD:         margin: 1em 0em 1em 0em; /* top right bottom left */
+#+HTML_HEAD:     } 
+#+HTML_HEAD:     div.outline-2 > h2, #table-of-contents > h2 { 
+#+HTML_HEAD:         background-color: var(--heading-bg-color);
+#+HTML_HEAD:         color: var(--heading-fg-color);
+#+HTML_HEAD:         font-variant: small-caps; 
+#+HTML_HEAD:         padding: 0em 0em 0em .5em; /* top right bottom left */
+#+HTML_HEAD:         margin: 0em -.5em 0em -.75em; /* top right bottom left */
+#+HTML_HEAD:         text-align: left;
+#+HTML_HEAD:     }
+#+HTML_HEAD:       #text-table-of-contents {
+#+HTML_HEAD:         overflow-y: visible; 
+#+HTML_HEAD:         height: inherit;
+#+HTML_HEAD:       }
+#+HTML_HEAD:       #text-table-of-contents ul {
+#+HTML_HEAD:           padding-left: 1em; 
+#+HTML_HEAD:           margin-left: 0.5em; 
+#+HTML_HEAD:       }
+#+HTML_HEAD:     }
+#+HTML_HEAD:     .linenr { font-size: xx-small; }
+#+HTML_HEAD: }
+#+HTML_HEAD: 
+#+HTML_HEAD: @media print {
+#+HTML_HEAD:     html {
+#+HTML_HEAD:         font-family: serif; 
+#+HTML_HEAD:         font-size: 10pt;
+#+HTML_HEAD:         text-align: justify; 
+#+HTML_HEAD:         .linenr { font-size: xx-small; }
+#+HTML_HEAD:     }
+#+HTML_HEAD: }
+#+HTML_HEAD: </style>
