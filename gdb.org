@@ -557,6 +557,61 @@ Dump of assembler code for function phase_1:
 End of assembler dump.
 #+END_SRC
 
+* <<advanced>> Advanced GDB Usage
+:PROPERTIES:
+:CUSTOM_ID: advanced
+:END:
+
+** Reverse Execution
+Traditionally GDB allowed stepping forwards only. This is
+understandable as programs flow "forwards" in time but vexing as many
+a debugging session has been ruined by stepping just a little /too
+far/ forward and missing a critical stopping point where information
+was desired.
+
+Modern GDB allows for reverse execution on most platforms through
+recording the states of the program at intervals. The following
+commands allow for reverse execution and are handy to avoid the
+heartache of stepping just a little too far.
+
+|-------------------------+-------------------------------------------------------------------|
+| COMMAND                 | EFFECT                                                            |
+|-------------------------+-------------------------------------------------------------------|
+| ~record full~           | Start recording program state to enable reverse execution         |
+|                         | The program must be running typically via ~break main~ then ~run~ |
+| ~rs / reverse-step~     | Back up one step into function calls, like ~s/step~ but backwards |
+| ~rn / reverse-next~     | Back up one step over function calls, like ~n/next~ but backwards |
+| ~rc / reverse-continue~ | Execute in reverse until  to the previous breakpoint is reached   |
+|-------------------------+-------------------------------------------------------------------|
+
+** Breakpoint Conditions 
+It is useful to break at a certain iteration when debugging loops and
+when parameter have certain values in functions. Breakpoints can be
+made conditional so that execution stops at a given point only if
+variables meet certain conditions.
+
+|------------------------------+---------------------------------------------------------------------|
+| COMMAND                      | EFFECT                                                              |
+|------------------------------+---------------------------------------------------------------------|
+| ~break 168 if x > 2~         | Conditional breakpoint at line 168 if variable ~x~ is larger than 2 |
+| ~break func if arg->fld > 3~ | Conditional breakpoint at func if an argument meets a requirement   |
+|------------------------------+---------------------------------------------------------------------|
+
+A good example is the following program which has loops and a function
+of interest.
+#+include: sample-programs/condbreak.c src c -n
+
+The session below demonstrates the utility of setting a conditional
+breakpoint which stops when a certain loop iteration is reached and
+also stops when a function call occurs with a parameter of a certain
+value.
+
+#+include: sample-programs/condbreak.out.sh src sh -n
+
+** COMMENT Breakpoint Actions
+
+
+** COMMENT Struct Layout Printing
 
 * COMMENT Printing Stack Memory Locations in GDB 
 * Other GDB Guides
@@ -580,6 +635,9 @@ can provide some information on what to look for.
 |---------------------+------------------------------------------------------------------------------|
 
 * CHANGELOG
+- Mon Mar 10 01:57:19 PM EDT 2025 :: Added the [[advanced][Advanced
+  GDB USage]] section including information on setting up reverse
+  execution in the debugger.
 - Mon Feb 17 04:50:20 PM EST 2025 :: Style adjustments to UMD flavor
   in preparation for re-deployment and updates.
 - Tue Oct 18 01:08:26 PM CDT 2022 :: Minor typo fixes and additions.
