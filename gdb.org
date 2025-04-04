@@ -13,8 +13,8 @@
 #+TOC: headlines 2
 
 *** Intended Audience
-This tutorial is for folks in courses like the UMN's CSCI 2021 or
-UMD's CMSC 216 which require use of GDB to work programs and perform
+This tutorial is for folks in courses like the [[https://www-users.cse.umn.edu/~kauffman/2021/schedule.html][UMN's CSCI 2021]] or
+[[https://www.cs.umd.edu/~profk/216/schedule.html][UMD's CMSC 216]] which require use of GDB to work programs and perform
 debugging exercises like Bryant and O'Hallarons notorious "Binary
 Bomb" project.  Others may benefit from the guide as well if they are
 looking to get oriented using GDB.
@@ -47,10 +47,11 @@ file:gdb-tui.png
 #+END_CENTER
 
 ** Normal Mode
-This is in contrast to the normal mode of ~gdb~ which does not show
-any source code unless the ~list~ command is issued. Most folks find
-this harder to work with unless they are running it as a sub-process
-of another editor such as ~emacs~.
+TUI Mode contrasts to the Normal Mode of ~gdb~ which does not show any
+source code unless the ~list~ command is issued. While normal mode
+allows the up/down arrows to recall history and makes copy/paste with
+the mouse more accessible on terminals, most folks find Normal Mode harder to
+work as it doesn't show the code position of the debugger.
 
 #+BEGIN_CENTER
 #+CAPTION: ~gdb ./puzzlebox~, the normal "quiet" mode. Source code is only shown after ~list~ commands.
@@ -70,92 +71,92 @@ The below sample run in ~gdb~ illustrates the basics of running
 commands like ~next / run / break~.
 
 #+BEGIN_SRC sh
->> gdb -tui ./puzzlebox                               # Start gdb with text user interface on the puzzlebox
+>> gdb -tui ./puzzlebox                                  # Start gdb with text user interface on the puzzlebox
 GNU gdb (GDB) 8.1
 ...
 Reading symbols from ./puzzlebox...done.
-(gdb) set args input.txt                              # set command line arguments to the input.txt
-(gdb) run                                             # run the program
+(gdb) set args input.txt                                 # set command line arguments to the input.txt
+(gdb) run                                                # run the program
 Starting program: puzzlebox input.txt
-UserID 'kauf0095' accepted: hash value = 1397510491   # program output
+UserID 'kauf0095' accepted: hash value = 1397510491      # program output
 PHASE 1: A puzzle you say? Challenge accepted!
 
 Ah ah ah, you didnt say the magic word...
 Failure: Double debugger burger, order up!
 
   ,* Score: 0 / 50 pts *
-[Inferior 1 (process 27727) exited normally]          # gdb indicates program ended
+[Inferior 1 (process 27727) exited normally]             # gdb indicates program ended
 
-(gdb) break phase01                                   # set a breakpoint to stop at function phase01()
+(gdb) break phase01                                      # set a breakpoint to stop at function phase01()
 Breakpoint 1 at 0x55555555551a: file puzzlebox.c, line 220.
 (gdb) run
 Starting program: puzzlebox input.txt
 UserID 'kauf0095' accepted: hash value = 1397510491
 PHASE 1: A puzzle you say? Challenge accepted!
 
-Breakpoint 1, phase01 () at puzzlebox.c:220           # hit a breakpoint
-220	  int a = atoi(next_input());                 # stopped at this line of code
-(gdb) step                                            # step forward one line of code
-next_input () at puzzlebox.c:197                      # stepped into function next_input()
+Breakpoint 1, phase01 () at puzzlebox.c:220              # hit a breakpoint
+220	  int a = atoi(next_input());                    # stopped at this line of code
+(gdb) step                                               # step forward one line of code
+next_input () at puzzlebox.c:197                         # stepped into function next_input()
 197	  input_idx++;
-(gdb) step                                            # step again
+(gdb) step                                               # step again
 198	  int ret = fscanf(input_fh, "%s", inputs[input_idx]);
-(gdb) finish                                          # boring: finish this function
-Run till exit from #0  next_input () at puzzlebox.c:198
+(gdb) finish                                             # boring: finish this function
+Run till exit from 0 next_input () at puzzlebox.c:198
 0x0000555555555524 in phase01 () at puzzlebox.c:220
-220	  int a = atoi(next_input());                 # back in phase01()
+220	  int a = atoi(next_input());                    # back in phase01()
 Value returned is $1 = 0x555555758380 <inputs+128> "1"
-(gdb) step                                            # forward
+(gdb) step                                               # forward
 221	  int b = atoi(next_input());
-(gdb) next                                            # move past the call to next_input()
+(gdb) next                                               # move past the call to next_input()
 222	  int c = atoi(next_input());
-(gdb) next                                            # past again: 3 inputs required for this phase
-224	  a += hash % 40;                             # doing something to a based on random hash...
-(gdb) print a                                         # show what happened to it
-$2 = 12                                               # now has value 12
-(gdb) n                                               # abbreviation for 'next'
-225	  if (a<b && b>c && a<c) {                    # some checks for a, b, c which are inputs
+(gdb) next                                               # past again: 3 inputs required for this phase
+224	  a += hash % 40;                                # doing something to a based on random hash...
+(gdb) print a                                            # show what happened to it
+$2 = 12                                                  # now has value 12
+(gdb) n                                                  # abbreviation for 'next'
+225	  if (a<b && b>c && a<c) {                       # some checks for a, b, c which are inputs
 (gdb) next
-228	  failure("Double debugger burger, order up!"); # about to fail, must need different inputs
-(gdb) kill                                              # kill the program
+228	  failure("Double debugger burger, order up!");  # about to fail, must need different inputs
+(gdb) kill                                               # kill the program
 Kill the program being debugged? (y or n) y
 
-                                                      # Edit intput.txt to have different values now
+                                                         # Edit intput.txt to have different values now
 
 
-(gdb) run                                             # re-run the program
+(gdb) run                                                # re-run the program
 Starting program: puzzlebox input.txt
 UserID 'kauf0095' accepted: hash value = 1397510491
 PHASE 1: A puzzle you say? Challenge accepted!
 
-Breakpoint 1, phase01 () at puzzlebox.c:220           # hit breakpoint again
+Breakpoint 1, phase01 () at puzzlebox.c:220              # hit breakpoint again
 220	  int a = atoi(next_input());
 
-(gdb) info break                                      # show info about which breakpoints are active
+(gdb) info break                                         # show info about which breakpoints are active
 Num     Type           Disp Enb Address            What
 1       breakpoint     keep y   0x000055555555551a in phase01 at puzzlebox.c:220
 	breakpoint already hit 1 time
 
-(gdb) break puzzlebox.c:225                           # don't feel like stepping: set a breakpoint some lines ahead
+(gdb) break puzzlebox.c:225                              # don't feel like stepping: set a breakpoint some lines ahead
 Breakpoint 2 at 0x555555555583: file puzzlebox.c, line 225.
 
-(gdb) info break                                      # show info on active brekpoints
+(gdb) info break                                         # show info on active brekpoints
 Num     Type           Disp Enb Address            What
 1       breakpoint     keep y   0x000055555555551a in phase01 at puzzlebox.c:220
 	breakpoint already hit 1 time
 2       breakpoint     keep y   0x0000555555555583 in phase01 at puzzlebox.c:225
 
-(gdb) continue                                        # continue executing until next breakpoint
+(gdb) continue                                           # continue executing until next breakpoint
 Continuing.
 
-Breakpoint 2, phase01 () at puzzlebox.c:225           # hit second breakpoint
+Breakpoint 2, phase01 () at puzzlebox.c:225              # hit second breakpoint
 225	  if (a<b && b>c && a<c) {
-(gdb) print a                                         # a value
+(gdb) print a                                            # a value
 $3 = 21
-(gdb) next                                            # see if this works
-228	  failure("Double debugger burger, order up!"); # nope
-(gdb) print b                                          # see b
-$4 = 2                                                 # probably need to make it bigger to satisfy a<b
+(gdb) next                                               # see if this works
+228	  failure("Double debugger burger, order up!");  # nope
+(gdb) print b                                            # see b
+$4 = 2                                                   # probably need to make it bigger to satisfy a<b
 
 #+END_SRC
 
@@ -316,9 +317,10 @@ manipulated.
 | ~x $rax+8~     | Print memory 8 bytes above where register ~rax~ points                 |                                     |
 | ~x /wx $rax~   | Print as "words" of 32-bit numbers in hexadecimal format               |                                     |
 | ~x /gx $rax~   | Print as "giant" 64-bit numbers in hexadecimal format                  |                                     |
-| ~x /5gd $rax~  | Print 5 64-bit numbers starting where ~rax~ points; use decimal format |                                     |
-| ~x /3wd $rsp~  | Print 3 32-bit numbers at the top of the stack (starting at ~rsp~)     |                                     |
-| ~x /3bd $rsp~  | Print 3 8-bit numbers at the top of the stack (starting at ~rsp~)      |                                     |
+| ~x /5gd $rax~  | Print 5 64-bit numbers starting where ~rax~ points; use decimal format | ~g~ for "giant word"                |
+| ~x /3wd $rsp~  | Print 3 32-bit numbers at the top of the stack (starting at ~rsp~)     | ~w~ for "word"                      |
+| ~x /3hd $rsp~  | Print 3 16-bit numbers at the top of the stack (starting at ~rsp~)     | ~h~ for "half word"                 |
+| ~x /3bd $rsp~  | Print 3 8-bit numbers at the top of the stack (starting at ~rsp~)      | ~b~ for "byte"                      |
 
 ** Command History and Screen Management in TUI Mode
 A bit of basic editing discipline is useful in gdb. The Text User
